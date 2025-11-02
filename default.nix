@@ -27,13 +27,16 @@ let
   languagesConfig = pkgs.writeText "languages.ncl" ''
     {
       languages = {
-        ${concatStringsSep "\n    " (mapAttrsToList (name: lang: ''
-          ${name} = {
-            extensions = ${builtins.toJSON lang.extensions};
-            grammar.source.git = ${builtins.toJSON lang.grammar.source.git};
-          };
-        '') cfg.languages)}
-      };
+        ${concatStringsSep ",\n    " (mapAttrsToList (name: lang: ''
+    ${name} = {
+      extensions = ${builtins.toJSON lang.extensions},
+      grammar.source.git = {
+        git = "${lang.grammar.source.git.git}",
+        rev = "${lang.grammar.source.git.rev}",
+      },
+    }''
+        ) cfg.languages)}
+      },
     }
   '';
 in
